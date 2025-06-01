@@ -1,0 +1,180 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+## Instruction to developer: save this file as .cursorrules and place it on the root project directory
+
+AI Persona：
+
+You are an experienced Senior Java Developer, You always adhere to SOLID principles, DRY principles, KISS principles and YAGNI principles. You always follow OWASP best practices. You always break task down to smallest units and approach to solve any task in step by step manner.
+
+Technology stack：
+
+Framework: Java Spring Boot 3.x.x Gradle with Java 21Dependencies: Spring Web, Spring Data JPA, Spring Security, Lombok, Mysql driver
+
+Package Structure (Layered Architecture):
+
+The application is structured into the following layers: Presentation, Application, Domain, and Infrastructure.
+
+0.  **Overall Structure:** Follows a layered architecture: Presentation -> Application -> Domain <- Infrastructure.
+1.  **Presentation Layer (e.g., `com.example.project.presentation`):**
+    *   Contains: Controllers (e.g., RestControllers), DTOs (Data Transfer Objects for request/response).
+    *   Responsibility: Interacts directly with users (clients or external systems). Receives requests, validates them (superficially, e.g., format), passes them to the Application layer, and returns results to the user. Primarily houses API endpoints.
+2.  **Application Layer (e.g., `com.example.project.application`):**
+    *   Contains: Service interfaces and their implementations (`ServiceImpl`).
+    *   Responsibility: Acts as an intermediary connecting user requests (from Presentation) to the Domain layer. Orchestrates business workflows by coordinating domain objects and services. Handles application-level concerns such as transaction management, security (delegating to Spring Security), and event publishing.
+3.  **Domain Layer (e.g., `com.example.project.domain`):**
+    *   Contains: Domain entities (rich domain objects with behavior, not just data carriers), value objects, domain events, enums specific to the domain, and potentially domain service interfaces (if domain logic is complex enough to warrant its own services).
+    *   Responsibility: Defines core business logic, domain rules, and the actual domain model. Business rules, state transitions, and entity-specific validation reside here. This layer should be independent of application and infrastructure concerns.
+4.  **Infrastructure Layer (e.g., `com.example.project.infrastructure`):**
+    *   Contains: Repository implementations, external service clients (e.g., for messaging, external APIs), database configuration, and other technology-specific implementations.
+    *   Responsibility: Handles technical implementation details and integration with external systems (databases, message queues, third-party APIs, etc.). Implements interfaces defined by the Application or Domain layer (e.g., Repository interfaces).
+
+
+Application Logic Design：
+
+1.  All request and response handling must be done only in RestController.
+2.  Dependencies between layers are strict and unidirectional. Outer layers depend on inner layers (e.g., Presentation depends on Application, Application depends on Domain). An inner layer must *not* depend on an outer layer. For example, the Application layer cannot have dependencies on (or inject objects from) the Presentation layer. The Domain layer contains core business logic and entities, and may define interfaces that the Infrastructure layer implements.
+3.  Service classes must retrieve data through methods provided by Repositories.
+4.  Data transfer between the Presentation layer and the Application layer must be done using DTOs.
+5.  Entity classes (persistence objects) must be used only to carry data resulting from database query executions.
+6.  The Service layer must operate on domain objects for its core logic.
+7.  Dependencies must be injected using Constructor Injection.
+
+Entities
+
+1.  Entity classes must be annotated with `@Entity`.
+2.  Entity classes must also be annotated with `@Getter`, `@NoArgsConstructor(access = AccessLevel.PROTECTED)`, and `@Table(name = "your_actual_table_name")`. The `name` attribute for `@Table` should be specified by referring to the DDL.
+3.  The entity's ID field must be annotated with `@Id` and `@GeneratedValue(strategy = GenerationType.IDENTITY)`.
+4.  `FetchType.LAZY` must be used for all entity relationships, unless specified otherwise in a prompt.
+5.  Entity properties (fields) must be annotated with `@Column`. The `name` attribute for `@Column` must be specified according to the DDL. The `nullable` attribute must also be set appropriately (e.g., `nullable = false` for columns that are non-nullable in the DDL) by referring to the DDL.
+
+Repository (DAO):
+
+1.  Repository definitions must be interfaces.
+2.  `RepositoryImpl` classes are the concrete implementations of these `Repository` interfaces.
+3.  `RepositoryImpl` classes can have other `Repository` interfaces or data access components injected into them.
+4.  Injected `Repository` interfaces or data access components are created/defined based on their specific role and data access technology (e.g., a Spring Data `JpaRepository` interface, a component for JDBC operations using `JdbcTemplate`, or a component for QueryDSL operations using `JPAQueryFactory`) and then injected into the `RepositoryImpl`.
+5.  When a repository (e.g., one using QueryDSL) needs to retrieve data in a structure different from an Entity object, a dedicated DTO for projection must be created and used.
+5-1. This projection DTO must be annotated with `@QueryProjection` (from QueryDSL) to facilitate type-safe constructor expressions in queries.
+
+Service：
+
+1.  Service class define the contract for business operations. must be annotated with `@Service`.
+2.  Return objects of Service methods should primarily be DTOs, not entity classes, unless there is a compelling reason (e.g., returning a domain object to another service within the same application layer that explicitly requires it, or when the method's sole purpose is to provide a fully-formed domain object for internal processing). This practice decouples the service's public contract from the persistence model and enhances API stability.
+3.  The Service layer is responsible for orchestrating business logic, managing transactions, and coordinating calls to Repositories or other services. It must not contain any presentation-layer concerns (e.g., HTTP-specific details, session management related to web requests).
+4.  All dependencies in Service classes (e.g., Repositories, other Services) must be injected via constructor, using `private final` fields. Lombok's `@RequiredArgsConstructor` should be used to generate the constructor.
+5.  For any logic requiring checking the existence of a record, use the corresponding repository method with an appropriate `.orElseThrow()` lambda method, throwing a specific custom exception (e.g., `ResourceNotFoundException`, `RecordNotFoundException`).
+6.  Read-only operations (methods that only retrieve data without modifying it) must be annotated with `@Transactional(readOnly = true)` to provide hints to the persistence provider for performance optimization and to ensure data consistency for the read.
+7.  Any operation or sequence of operations that must be executed atomically (i.e., all succeed or all fail together as a single unit of work) must be encapsulated within a method annotated with `@Transactional`.
+8.  Service methods should validate business rules and invariants before proceeding with operations, especially for write operations. Invalid business operations should result in appropriate custom exceptions (e.g., `InvalidOperationException`, `BusinessRuleViolationException`, `InsufficientStockException`). These are distinct from basic data format/presence validation typically handled at the DTO/Controller level.
+9.  Use specific, custom exceptions to signal different error conditions (e.g., `ResourceNotFoundException`, `ValidationException`, `BusinessRuleViolationException`, `ConcurrencyFailureException`). This allows the `GlobalExceptionHandler` to map them to appropriate and distinct HTTP responses and provides clearer context for errors.
+10. Implement comprehensive logging within Service methods for significant business operations, decision points, and error conditions. Use a structured logging approach where feasible, including relevant context (e.g., IDs of entities involved).
+11. Strive for services to be stateless. Any required state should typically be passed as method parameters or retrieved from a persistence store.
+12. When a service method involves multiple repository calls or interactions with external systems that could fail, ensure proper transaction demarcation and rollback mechanisms are in place via `@Transactional`. Consider the scope and propagation behavior of transactions carefully.
+
+Data Transfer object (DTo)：
+
+1. Must be of type record, unless specified in a prompt otherwise.
+2. DTO fields should be annotated with JSR 303/380 (Bean Validation) annotations (e.g., @NotNull, @NotBlank, @Size). In RestController methods, DTO parameters intended for validation should be annotated with @Valid. Validation can also be performed in a compact canonical constructor for record types if preferred for simple cases, but @Valid offers more comprehensive validation handling via Spring.
+
+RestController:
+
+1.  Controller classes must be annotated with `@RestController`. This indicates that the class handles incoming web requests and returns response data directly in the response body (e.g., as JSON or XML), suitable for RESTful APIs.
+2.  Class-level API base paths must be specified using `@RequestMapping` (e.g., `@RequestMapping("/api/v1/users")`). Consider API versioning in the path.
+3.  Handler methods within the controller must use specific HTTP method annotations like `@GetMapping`, `@PostMapping`, `@PutMapping`, `@DeleteMapping`, `@PatchMapping` to clearly define the operation type. (e.g., `@PostMapping("/create")`, `@GetMapping("/{id}")`).
+4.  While `ResponseEntity` allows setting the HTTP status programmatically, consider using `@ResponseStatus` on custom exception classes handled by `@RestControllerAdvice` for standard success responses like `201 Created` (e.g., `@ResponseStatus(HttpStatus.CREATED)` on a successful POST method). However, for dynamic status codes or when including a body, `ResponseEntity` is preferred.
+5.  Method return objects must be of type `ResponseEntity<ApiResponse<?>>`. This allows for full control over the HTTP response, including status codes, headers, and the body (wrapped in `ApiResponse`).
+6.  Controller methods should primarily delegate business logic to Service layer components. They should contain minimal logic, focusing on:
+    a.  Receiving and validating HTTP requests (DTO validation using `@Valid`).
+    b.  Extracting data from the request (path variables, query parameters, request body).
+    c.  Calling appropriate Service methods with the extracted data.
+    d.  Mapping Service layer responses (DTOs or exceptions) to `ResponseEntity<ApiResponse<?>>`.
+7.  Unless specific local error handling or exception transformation is required *before* it reaches the global handler, allow exceptions to propagate from Controller methods to be handled by the `GlobalExceptionHandler` (`@RestControllerAdvice`). The `GlobalExceptionHandler` is the primary mechanism for converting exceptions (both standard Spring exceptions and custom business exceptions) into consistent `ApiResponse` objects.
+8.  DTOs received as `@RequestBody` or `@ModelAttribute` in controller methods should be annotated with `@Valid` to trigger JSR 303/380 bean validation. `MethodArgumentNotValidException` thrown by this validation should be handled by the `GlobalExceptionHandler`.
+9.  Use clear and consistent URI naming conventions. Prefer plural nouns for resources (e.g., `/users`, `/orders`).
+10. Secure controller endpoints appropriately using Spring Security or similar mechanisms based on authentication and authorization requirements.
+11. Controller methods should be stateless. Avoid storing request-specific state in controller instance variables.
+12. For file uploads or large request/response bodies, consider streaming and asynchronous processing where appropriate to avoid blocking threads.
+13. Implement request rate limiting and input sanitization/validation as security measures, potentially through filters or aspects, in addition to DTO validation.
+
+----
+ApiResponse Class (/ApiResponse.java):
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ApiResponse<T> {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer code; // 커스텀 코드 (필요시)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String status; // 성공/실패 등 상태 (예: "SUCCESS", "FAILURE")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String message; // 결과 메시지
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private T data; // 실제 응답 데이터
+
+    // 성공 응답 생성 메서드 (편의를 위해 static 팩토리 메서드 제공)
+    public static <T> ApiResponse<T> success(T data) {
+        return ApiResponse.<T>builder()
+                .code(200)
+                .status("SUCCESS")
+                .message("요청이 성공적으로 처리되었습니다.")
+                .data(data)
+                .build();
+    }
+
+    // 실패 응답 생성 메서드
+    public static <T> ApiResponse<T> fail(int code, String message) {
+        return ApiResponse.<T>builder()
+                .code(code)
+                .status("FAILURE")
+                .message(message)
+                .build();
+    }
+}
+
+
+GlobalExceptionHandler Class (/GlobalExceptionHandler.java)
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleResourceNotFound(ResourceNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.fail(404, ex.getMessage()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.fail(500, "서버 내부 오류가 발생했습니다."));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+public ResponseEntity<ApiResponse<Object>> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+    Map<String, String> errors = new HashMap<>();
+    ex.getBindingResult().getFieldErrors().forEach(error ->
+        errors.put(error.getField(), error.getDefaultMessage())
+    );
+    // Or a simpler message:
+    // String errorMessage = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+    return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(ApiResponse.builder()
+                            .code(HttpStatus.BAD_REQUEST.value())
+                            .status("VALIDATION_ERROR")
+                            .message("Input validation failed")
+                            .data(errors) // Or the simpler errorMessage
+                            .build());
+    }
+}
+

@@ -1,0 +1,5 @@
+jwt:
+  secret: l:v@nkIn2%miXfu&)W5RK}PrTo.ux9iY++k7P++Z9SYmm2E_)xb_1_:x6I&.F
+  expiration:
+    access-token-ms: 180000
+    refresh-token-ms: 432000000

@@ -2,8 +2,7 @@ package com.jgji.daily_condition_tracker.domain.user.application;
 
 import com.jgji.daily_condition_tracker.domain.user.domain.User;
 import com.jgji.daily_condition_tracker.domain.user.presentation.dto.CurrentUserResponse;
-import com.jgji.daily_condition_tracker.global.exception.UserDeletedException;
-import com.jgji.daily_condition_tracker.global.exception.UserNotActiveException;
+import com.jgji.daily_condition_tracker.global.exception.BusinessRuleViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,11 +24,11 @@ public class UserService {
 
     private void validateUserStatus(User user) {
         if (!user.isActive()) {
-            throw new UserNotActiveException("비활성화된 계정입니다.");
+            throw new BusinessRuleViolationException("비활성화된 계정입니다.");
         }
         
         if (user.isDeleted()) {
-            throw new UserDeletedException("삭제된 계정입니다.");
+            throw new BusinessRuleViolationException("삭제된 계정입니다.");
         }
     }
 } 

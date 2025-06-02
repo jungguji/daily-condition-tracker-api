@@ -7,7 +7,7 @@ import com.jgji.daily_condition_tracker.domain.user.domain.User;
 import com.jgji.daily_condition_tracker.domain.user.infrastructure.UserRepository;
 import com.jgji.daily_condition_tracker.domain.user.presentation.dto.SignUpRequest;
 import com.jgji.daily_condition_tracker.domain.user.presentation.dto.SignUpResponse;
-import com.jgji.daily_condition_tracker.global.exception.DuplicateResourceException;
+import com.jgji.daily_condition_tracker.global.exception.BusinessRuleViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,10 +28,7 @@ public class SignUpService {
 
         assert request.email() != null : "이메일은 null일 수 없습니다.";
 
-        if (userRepository.existsByEmail(request.email())) {
-            log.warn("이메일 중복: {}", request.email());
-            throw new DuplicateResourceException("사용자", "이메일", request.email());
-        }
+        validateEmailDuplication(request.email());
 
         HashedPassword hashedPassword = HashedPassword.of(RawPassword.of(request.password()), passwordEncoder);
 
@@ -48,6 +45,12 @@ public class SignUpService {
         log.info("회원가입 완료: userId={}, email={}", savedUser.getUserId(), savedUser.getEmail());
 
         return new SignUpResponse(savedUser.getUserId(), savedUser.getEmail().getValue());
+    }
+
+    private void validateEmailDuplication(String emailValue) {
+        if (userRepository.existsByEmail(emailValue)) {
+            throw new BusinessRuleViolationException("이미 존재하는 이메일입니다: " + emailValue);
+        }
     }
 
     /**

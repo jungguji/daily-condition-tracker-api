@@ -73,18 +73,6 @@ public class AuthService {
         
         return TokenRefreshResponse.of(newAccessToken, newRefreshToken);
     }
-    
-    @Transactional
-    public void logout(String authorizationHeader) {
-        if (!StringUtils.hasText(authorizationHeader) || !authorizationHeader.startsWith("Bearer ")) {
-            throw new InvalidTokenException("유효하지 않은 Authorization 헤더입니다.");
-        }
-        
-        String accessToken = authorizationHeader.substring(7);
-        
-        tokenRepository.addToBlacklist(accessToken);
-        log.info("사용자 로그아웃 처리 완료 - 토큰을 블랙리스트에 추가");
-    }
 
     /**
      * 사용자 정보와 토큰을 이용한 로그아웃 처리

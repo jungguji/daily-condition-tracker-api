@@ -4,6 +4,7 @@ import com.jgji.daily_condition_tracker.global.common.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -44,18 +45,6 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 잘못된 요청 예외 (400)
-     */
-    @ExceptionHandler(InvalidOperationException.class)
-    public ResponseEntity<ApiResponse<Void>> handleInvalidOperation(InvalidOperationException ex) {
-        log.warn("잘못된 요청: {}", ex.getMessage());
-        
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.fail(400, ex.getMessage()));
-    }
-
-    /**
      * 유효성 검증 실패 (400)
      * @Valid 어노테이션으로 인한 검증 실패 시 발생
      */
@@ -76,18 +65,6 @@ public class GlobalExceptionHandler {
                         .message("입력 데이터 검증에 실패했습니다.")
                         .data(errors)
                         .build());
-    }
-
-    /**
-     * 중복 리소스 예외 (409)
-     */
-    @ExceptionHandler(DuplicateResourceException.class)
-    public ResponseEntity<ApiResponse<Void>> handleDuplicateResource(DuplicateResourceException ex) {
-        log.warn("중복 리소스: {}", ex.getMessage());
-        
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(ApiResponse.fail(409, ex.getMessage()));
     }
 
     /**
@@ -139,24 +116,6 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.fail(500, "서버 내부 오류가 발생했습니다."));
     }
 
-    @ExceptionHandler(UserNotActiveException.class)
-    public ResponseEntity<ApiResponse<Void>> handleUserNotActive(UserNotActiveException ex) {
-        log.warn("비활성화된 사용자: {}", ex.getMessage());
-        
-        return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
-                .body(ApiResponse.fail(403, ex.getMessage()));
-    }
-
-    @ExceptionHandler(UserDeletedException.class)
-    public ResponseEntity<ApiResponse<Void>> handleUserDeleted(UserDeletedException ex) {
-        log.warn("삭제된 사용자: {}", ex.getMessage());
-        
-        return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
-                .body(ApiResponse.fail(403, ex.getMessage()));
-    }
-
     /**
      * IllegalArgumentException (400)
      */
@@ -168,18 +127,5 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.fail(400, "잘못된 요청 파라미터입니다."));
-    }
-
-    /**
-     * 잘못된 인증 정보 예외 (401)
-     */
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ApiResponse<Void>> handleInvalidCredentials(InvalidCredentialsException ex) {
-        log.error("{}", ex);
-        log.warn("잘못된 인증 정보: {}", ex.getMessage());
-        
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(ApiResponse.fail(401, ex.getMessage()));
     }
 } 

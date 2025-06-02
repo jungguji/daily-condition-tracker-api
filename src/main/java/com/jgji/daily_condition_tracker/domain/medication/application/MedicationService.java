@@ -7,6 +7,7 @@ import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.Medic
 import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationSummaryResponse;
 import com.jgji.daily_condition_tracker.global.common.PageRequest;
 import com.jgji.daily_condition_tracker.global.common.PageResponse;
+import com.jgji.daily_condition_tracker.global.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -67,6 +68,23 @@ public class MedicationService {
                 pageRequest.page(),
                 pageRequest.size(),
                 medicationsPage.getTotalElements()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public MedicationResponse findMedicationById(long medicationId, long userId) {
+        Medication medication = medicationRepository.findByIdAndUserId(medicationId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("약", "ID", medicationId));
+        
+        return MedicationResponse.from(
+                medication.getMedicationId(),
+                medication.getName(),
+                medication.getDosage(),
+                medication.getUnit(),
+                medication.getDescription(),
+                medication.isActive(),
+                medication.getCreatedAt(),
+                medication.getUpdatedAt()
         );
     }
 } 

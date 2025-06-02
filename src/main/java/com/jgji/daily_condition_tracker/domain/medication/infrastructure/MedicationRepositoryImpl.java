@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 class MedicationRepositoryImpl implements MedicationRepository {
@@ -30,5 +32,11 @@ class MedicationRepositoryImpl implements MedicationRepository {
     public Page<Medication> findByUserId(long userId, Pageable pageable) {
         Page<MedicationEntity> entityPage = medicationJpaRepository.findByUserId(userId, pageable);
         return entityPage.map(MedicationEntity::toDomain);
+    }
+
+    @Override
+    public Optional<Medication> findByIdAndUserId(long medicationId, long userId) {
+        Optional<MedicationEntity> entityOptional = medicationJpaRepository.findByMedicationIdAndUserId(medicationId, userId);
+        return entityOptional.map(MedicationEntity::toDomain);
     }
 } 

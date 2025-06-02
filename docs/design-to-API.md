@@ -93,7 +93,7 @@
         - `POST /auth/password-reset/request`
 21. **새 비밀번호 설정 화면**
     - 프레임 ID: `7:273`
-    - 관련 API:
+    - 관련  API:
         - `POST /auth/password-reset/confirm`
 22. **기록 상세 보기 화면 (증상 예시)**
     - 프레임 ID: `7:283`

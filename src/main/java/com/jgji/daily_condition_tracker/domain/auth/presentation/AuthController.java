@@ -63,4 +63,13 @@ public class AuthController {
 
         return ResponseEntity.ok(ApiResponse.success(null));
     }
+
+    @PostMapping("/password-reset/confirm")
+    public ResponseEntity<ApiResponse<Void>> confirmPasswordReset(@Valid @RequestBody PasswordResetConfirmRequest request) {
+        log.info("비밀번호 재설정 확인 요청 수신: token={}", request.token());
+        passwordResetTokenService.processPasswordResetConfirm(request.token(), request.newPassword());
+        log.info("비밀번호 재설정 확인 처리 완료: token={}", request.token());
+        
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
 } 

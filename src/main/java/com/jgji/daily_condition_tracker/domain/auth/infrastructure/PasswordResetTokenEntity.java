@@ -39,18 +39,19 @@ public class PasswordResetTokenEntity extends BaseEntity {
     private OffsetDateTime expiryDate;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private PasswordResetTokenEntity(Long passwordResetTokenId, String token, long userId, OffsetDateTime expiryDate) {
+    private PasswordResetTokenEntity(Long passwordResetTokenId, String token, long userId, boolean isUsed, OffsetDateTime expiryDate) {
         this.passwordResetTokenId = passwordResetTokenId;
         this.token = token;
         this.userId = userId;
+        this.isUsed = isUsed;
         this.expiryDate = expiryDate;
-        this.isUsed = false; // 기본값: 미사용
     }
 
     protected PasswordResetTokenEntity create(String token, long userId, OffsetDateTime expiryDate) {
         return PasswordResetTokenEntity.builder()
             .token(token)
             .userId(userId)
+            .isUsed(false)
             .expiryDate(expiryDate)
             .build();
     }
@@ -60,6 +61,7 @@ public class PasswordResetTokenEntity extends BaseEntity {
             .passwordResetTokenId(passwordResetToken.getPasswordResetTokenId())
             .token(passwordResetToken.getToken())
             .userId(passwordResetToken.getUserId())
+            .isUsed(passwordResetToken.isUsed())
             .expiryDate(passwordResetToken.getExpiryDate())
             .build();
     }

@@ -9,6 +9,8 @@ public interface UserRepository {
 
     Optional<User> findByEmail(String email);
 
+    Optional<User> findByUserId(Long userId);
+
     User create(User user);
 
     User update(User user);

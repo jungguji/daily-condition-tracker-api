@@ -23,6 +23,12 @@ class UserRepositoryImpl implements UserRepository {
     }
     
     @Override
+    public Optional<User> findByUserId(Long userId) {
+        return userJPARepository.findById(userId)
+                .map(UserEntity::toDomain);
+    }
+    
+    @Override
     public User create(User user) {
         UserEntity userEntity = UserEntity.fromDomain(user);
         UserEntity savedEntity = userJPARepository.save(userEntity);

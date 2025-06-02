@@ -43,6 +43,8 @@ public class PasswordResetToken {
                 .passwordResetTokenId(passwordResetTokenEntity.getPasswordResetTokenId())
                 .token(passwordResetTokenEntity.getToken())
                 .userId(passwordResetTokenEntity.getUserId())
+                .isUsed(passwordResetTokenEntity.isUsed())
+                .expiryDate(passwordResetTokenEntity.getExpiryDate())
                 .build();
     }
 

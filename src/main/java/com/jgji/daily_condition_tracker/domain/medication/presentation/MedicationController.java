@@ -2,6 +2,9 @@ package com.jgji.daily_condition_tracker.domain.medication.presentation;
 
 import com.jgji.daily_condition_tracker.domain.auth.application.CustomUserPrincipal;
 import com.jgji.daily_condition_tracker.domain.medication.application.MedicationService;
+import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationSummaryResponse;
+import com.jgji.daily_condition_tracker.global.common.PageRequest;
+import com.jgji.daily_condition_tracker.global.common.PageResponse;
 import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationCreateRequest;
 import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationResponse;
 import com.jgji.daily_condition_tracker.global.common.ApiResponse;
@@ -35,5 +38,25 @@ public class MedicationController {
         
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(response));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<PageResponse<MedicationSummaryResponse>>> getMedications(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "medicationId") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction,
+            @RequestParam(required = false) Boolean isActive,
+            @AuthenticationPrincipal CustomUserPrincipal userDetails) {
+        
+        long userId = userDetails.getUser().getUserId();
+        
+        PageRequest pageRequest = PageRequest.of(page, size, sortBy, direction);
+        PageResponse<MedicationSummaryResponse> response = medicationService.findMedicationsByUserId(userId, pageRequest, isActive);
+        
+        log.debug("약 목록 조회 성공: userId={}, page={}, size={}, totalElements={}", 
+                userId, page, size, response.totalElements());
+        
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 } 

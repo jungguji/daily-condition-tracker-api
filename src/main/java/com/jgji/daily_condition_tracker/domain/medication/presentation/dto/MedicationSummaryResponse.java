@@ -5,7 +5,7 @@ import com.jgji.daily_condition_tracker.domain.medication.domain.Medication;
 import java.time.OffsetDateTime;
 
 public record MedicationSummaryResponse(
-        Long medicationId,
+        long medicationId,
         String name,
         Integer dosage,
         String unit,

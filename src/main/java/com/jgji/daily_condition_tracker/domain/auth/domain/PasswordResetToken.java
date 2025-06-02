@@ -11,7 +11,7 @@ import java.util.UUID;
 @Getter
 public class PasswordResetToken {
 
-    private final long passwordResetTokenId;
+    private final Long passwordResetTokenId;
     private final String token;
     private final long userId;
     private final boolean isUsed;
@@ -21,7 +21,7 @@ public class PasswordResetToken {
     private static final int TOKEN_EXPIRATION_TIME_IN_MINUTES = 60;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private PasswordResetToken(long passwordResetTokenId, String token, long userId, boolean isUsed, OffsetDateTime expiryDate) {
+    private PasswordResetToken(Long passwordResetTokenId, String token, long userId, boolean isUsed, OffsetDateTime expiryDate) {
         this.passwordResetTokenId = passwordResetTokenId;
         this.token = token;
         this.userId = userId;

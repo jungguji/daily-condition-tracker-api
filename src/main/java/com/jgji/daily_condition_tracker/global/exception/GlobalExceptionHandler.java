@@ -115,6 +115,49 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 유효하지 않은 토큰 예외 (401)
+     */
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInvalidToken(InvalidTokenException ex) {
+        log.warn("유효하지 않은 토큰: {}", ex.getMessage());
+        
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.fail(401, ex.getMessage()));
+    }
+
+    /**
+     * 일반적인 예외 처리 (500)
+     * 예상하지 못한 모든 예외를 처리
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
+        log.error("예상하지 못한 오류 발생", ex);
+        
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.fail(500, "서버 내부 오류가 발생했습니다."));
+    }
+
+    @ExceptionHandler(UserNotActiveException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUserNotActive(UserNotActiveException ex) {
+        log.warn("비활성화된 사용자: {}", ex.getMessage());
+        
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.fail(403, ex.getMessage()));
+    }
+
+    @ExceptionHandler(UserDeletedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUserDeleted(UserDeletedException ex) {
+        log.warn("삭제된 사용자: {}", ex.getMessage());
+        
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.fail(403, ex.getMessage()));
+    }
+
+    /**
      * IllegalArgumentException (400)
      */
     @ExceptionHandler(IllegalArgumentException.class)
@@ -138,30 +181,5 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(ApiResponse.fail(401, ex.getMessage()));
-    }
-
-    /**
-     * 유효하지 않은 토큰 예외 (401)
-     */
-    @ExceptionHandler(InvalidTokenException.class)
-    public ResponseEntity<ApiResponse<Void>> handleInvalidToken(InvalidTokenException ex) {
-        log.warn("유효하지 않은 토큰: {}", ex.getMessage());
-        
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(ApiResponse.fail(401, ex.getMessage()));
-    }
-
-    /**
-     * 일반적인 예외 처리 (500)
-     * 예상하지 못한 모든 예외를 처리
-     */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
-        log.error("예상하지 못한 오류 발생", ex);
-        
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.fail(500, "서버 내부 오류가 발생했습니다."));
     }
 } 

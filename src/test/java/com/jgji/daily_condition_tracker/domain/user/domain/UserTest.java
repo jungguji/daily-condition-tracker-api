@@ -1,8 +1,6 @@
-package com.jgji.daily_condition_tracker.domain.auth.domain;
+package com.jgji.daily_condition_tracker.domain.user.domain;
 
 import com.jgji.daily_condition_tracker.constants.UserConstants;
-import com.jgji.daily_condition_tracker.domain.user.domain.HashedPassword;
-import com.jgji.daily_condition_tracker.domain.user.domain.User;
 import com.jgji.daily_condition_tracker.fake.FakePasswordEncoder;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector;
@@ -20,7 +18,7 @@ class UserTest {
             .objectIntrospector(BuilderArbitraryIntrospector.INSTANCE)
             .build();
 
-    PasswordEncoder passwordEncoder = new FakePasswordEncoder();
+    PasswordEncoder passwordEncoder = new FakePasswordEncoder("test");
 
     @DisplayName("유저 생성 - 성공 케이스")
     @Nested
@@ -195,7 +193,7 @@ class UserTest {
         void updatePassword_Success() {
             // given
             User user = createBaseUser();
-            HashedPassword newPassword = HashedPassword.of("newPasswordHashnewPasswordHashnewPasswordHash", passwordEncoder);
+            HashedPassword newPassword = HashedPassword.of(RawPassword.of("newPasswordHashnewPasswordHashnewPasswordHash123!@#"), passwordEncoder);
             
             // when
             User updatedUser = user.updatePassword(newPassword);

@@ -52,7 +52,7 @@ public final class User {
     }
 
     // 레이어 규칙을 위반하지만 실수 방지를 위해 사용
-    // 모두 오픈한 메서드를 생성한다면, 다른 곳에서 무분별하게 사용가능한 것을 막기 위해
+    // 모두 오픈한 메서드를 생성한다면 다른 곳에서 무분별하게 사용가능
     public static User ofEntity(UserEntity entity) {
         return User.builder()
                 .userId(entity.getUserId())

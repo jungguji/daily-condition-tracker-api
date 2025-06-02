@@ -52,6 +52,7 @@ public class SecurityConfig {
                         // 인증이 필요한 경로들
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/logout").authenticated() // 로그아웃
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/me").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/medications").authenticated() // 약 등록
 
                         .anyRequest().authenticated() // 그 외 모든 경로는 인증 필요
                 )

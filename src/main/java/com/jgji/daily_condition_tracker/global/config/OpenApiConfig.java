@@ -1,5 +1,7 @@
 package com.jgji.daily_condition_tracker.global.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -38,5 +40,10 @@ public class OpenApiConfig {
                                 .email("contact@jgji.com")
                         )
                 );
+    }
+
+    @Bean
+    public ModelResolver modelResolver(ObjectMapper objectMapper) {
+        return new ModelResolver(objectMapper);
     }
 } 

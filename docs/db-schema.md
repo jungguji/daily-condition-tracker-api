@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `medications` (
   `medication_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '약 고유 ID',
   `user_id` BIGINT UNSIGNED NOT NULL COMMENT '해당 약을 등록한 사용자 ID',
   `name` VARCHAR(255) NOT NULL COMMENT '약 이름',
-  `dosage` VARCHAR(100) NULL COMMENT '용량 (e.g., 50mg, 1정)',
+  `dosage` SMALLINT UNSIGNED NULL COMMENT '용량 (e.g., 50mg, 1정)',
   `unit` VARCHAR(50) NULL COMMENT '단위 (e.g., mg, 정, ml)',
   `description` TEXT NULL COMMENT '약에 대한 추가 설명/메모',
   `is_active` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '현재 복용중인 약 여부 (1: 활성, 0: 비활성)',

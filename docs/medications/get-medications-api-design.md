@@ -27,7 +27,7 @@
 
 목록 조회 시에는 각 약물의 전체 정보보다는 요약된 정보가 적합하므로, 새로운 DTO를 정의합니다.
 
-**파일명**: `com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationSummaryDto.java` (신규 정의)
+**파일명**: `com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationSummaryResponse.java` (신규 정의)
 
 ```java
 // package com.jgji.daily_condition_tracker.domain.medication.presentation.dto;

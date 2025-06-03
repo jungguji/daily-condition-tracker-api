@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 class UserRepositoryImpl implements UserRepository {
     
-    private final UserJPARepository userJPARepository;
+    private final UserJpaRepository userJPARepository;
     
     @Override
     public boolean existsByEmail(String email) {

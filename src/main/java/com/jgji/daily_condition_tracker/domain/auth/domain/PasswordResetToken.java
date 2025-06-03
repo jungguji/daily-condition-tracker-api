@@ -9,7 +9,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Getter
-public class PasswordResetToken {
+public final class PasswordResetToken {
 
     private final Long passwordResetTokenId;
     private final String token;

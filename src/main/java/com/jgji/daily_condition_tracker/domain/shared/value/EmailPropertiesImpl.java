@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @RequiredArgsConstructor
 @ConfigurationProperties(prefix = "email")
-public class EmailPropertiesImpl implements EmailProperties {
+class EmailPropertiesImpl implements EmailProperties {
 
     private final Smtp smtp;
     private final String from;

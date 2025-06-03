@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository
-public class PasswordResetTokenRepositoryImpl implements PasswordResetTokenRepository {
+class PasswordResetTokenRepositoryImpl implements PasswordResetTokenRepository {
     
     private final PasswordResetTokenJpaRepository passwordResetTokenJpaRepository;
     

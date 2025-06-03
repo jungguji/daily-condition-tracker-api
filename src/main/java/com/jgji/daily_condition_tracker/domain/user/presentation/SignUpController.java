@@ -21,11 +21,11 @@ public class SignUpController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
     public ApiResponse<SignUpResponse> signUp(@Valid @RequestBody SignUpRequest request) {
-        log.info("회원가입 요청 수신: email={}", request.email());
+        log.debug("회원가입 요청 수신: email={}", request.email());
 
         SignUpResponse response = signUpService.signUp(request);
 
-        log.info("회원가입 응답 전송: userId={}", response.userId());
+        log.debug("회원가입 응답 전송: userId={}", response.userId());
 
         return ApiResponse.success(response);
     }

@@ -35,7 +35,7 @@ class EmailSenderImpl implements EmailSender {
             message.setText(text);
             javaMailSender.send(message);
             
-            log.info("비밀번호 재설정 이메일이 성공적으로 발송되었습니다. 수신자: {}", toEmail);
+            log.debug("비밀번호 재설정 이메일이 성공적으로 발송되었습니다. 수신자: {}", toEmail);
         } catch (Exception e) {
             log.error("비밀번호 재설정 이메일 발송 실패. 수신자: {}, 오류: {}", toEmail, e.getMessage(), e);
             throw new RuntimeException("이메일 발송에 실패했습니다.", e);

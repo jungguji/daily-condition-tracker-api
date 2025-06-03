@@ -24,7 +24,7 @@ public class SignUpService {
 
     @Transactional(rollbackFor = Exception.class)
     public SignUpResponse signUp(SignUpRequest request) {
-        log.info("회원가입 시도: email={}", request.email());
+        log.debug("회원가입 시도: email={}", request.email());
 
         assert request.email() != null : "이메일은 null일 수 없습니다.";
 
@@ -42,7 +42,7 @@ public class SignUpService {
 
         assert savedUser.getUserId() > 0 : "저장된 사용자의 ID가 유효하지 않습니다.";
 
-        log.info("회원가입 완료: userId={}, email={}", savedUser.getUserId(), savedUser.getEmail());
+        log.debug("회원가입 완료: userId={}, email={}", savedUser.getUserId(), savedUser.getEmail());
 
         return new SignUpResponse(savedUser.getUserId(), savedUser.getEmail().getValue());
     }

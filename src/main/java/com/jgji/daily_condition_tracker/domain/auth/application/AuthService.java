@@ -89,6 +89,6 @@ public class AuthService {
         }
 
         tokenRepository.addToBlacklist(accessToken);
-        log.info("사용자 로그아웃 처리 완료: email={}, 토큰을 블랙리스트에 추가", user.getEmail().getValue());
+        log.debug("사용자 로그아웃 처리 완료: email={}, 토큰을 블랙리스트에 추가", user.getEmail().getValue());
     }
 } 

@@ -28,17 +28,17 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
-        log.info("로그인 요청 수신: email={}", request.email());
+        log.debug("로그인 요청 수신: email={}", request.email());
         LoginResponse response = authService.login(request);
-        log.info("로그인 성공: email={}", request.email());
+        log.debug("로그인 성공: email={}", request.email());
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse<TokenRefreshResponse>> refresh(@Valid @RequestBody TokenRefreshRequest request) {
-        log.info("토큰 갱신 요청 수신");
+        log.debug("토큰 갱신 요청 수신");
         TokenRefreshResponse response = authService.refresh(request);
-        log.info("토큰 갱신 성공");
+        log.debug("토큰 갱신 성공");
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -49,26 +49,26 @@ public class AuthController {
         User user = userDetails.getUser();
         String authorizationHeader = request.getHeader("Authorization");
         
-        log.info("로그아웃 요청 수신: email={}", user.getEmail().getValue());
+        log.debug("로그아웃 요청 수신: email={}", user.getEmail().getValue());
         authService.logout(user, authorizationHeader);
-        log.info("로그아웃 성공: email={}", user.getEmail().getValue());
+        log.debug("로그아웃 성공: email={}", user.getEmail().getValue());
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
     @PostMapping("/password-reset/request")
     public ResponseEntity<ApiResponse<Void>> requestPasswordReset(@Valid @RequestBody PasswordResetRequestRequest request) {
-        log.info("비밀번호 재설정 요청 수신: email={}", request.email());
+        log.debug("비밀번호 재설정 요청 수신: email={}", request.email());
         passwordResetTokenService.processPasswordResetRequest(request.email());
-        log.info("비밀번호 재설정 요청 처리 완료: email={}", request.email());
+        log.debug("비밀번호 재설정 요청 처리 완료: email={}", request.email());
 
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
     @PostMapping("/password-reset/confirm")
     public ResponseEntity<ApiResponse<Void>> confirmPasswordReset(@Valid @RequestBody PasswordResetConfirmRequest request) {
-        log.info("비밀번호 재설정 확인 요청 수신: token={}", request.token());
+        log.debug("비밀번호 재설정 확인 요청 수신: token={}", request.token());
         passwordResetTokenService.processPasswordResetConfirm(request.token(), request.newPassword());
-        log.info("비밀번호 재설정 확인 처리 완료: token={}", request.token());
+        log.debug("비밀번호 재설정 확인 처리 완료: token={}", request.token());
         
         return ResponseEntity.ok(ApiResponse.success(null));
     }

@@ -264,7 +264,7 @@ JWT Token -> CustomUserPrincipal -> User Domain Object -> CurrentUserResponse DT
 
 ### 14.2. 모니터링 및 로깅
 ```java
-log.info("현재 사용자 정보 조회 요청: userId={}", user.getUserId());
+log.debug("현재 사용자 정보 조회 요청: userId={}", user.getUserId());
 log.debug("현재 사용자 정보 조회 성공: userId={}, email={}", user.getUserId(), user.getEmail().getValue());
 ```
 

@@ -42,13 +42,13 @@ public class PasswordResetTokenService {
 
             try {
                 emailSender.sendPasswordResetEmail(email, passwordResetToken.getToken());
-                log.info("비밀번호 재설정 이메일 발송 완료: email={}", email);
+                log.debug("비밀번호 재설정 이메일 발송 완료: email={}", email);
             } catch (Exception e) {
                 log.error("비밀번호 재설정 이메일 발송 실패: email={}, error={}", email, e.getMessage(), e);
                 // 이메일 발송 실패 시에도 사용자에게는 성공 응답을 반환하여 보안을 유지
             }
         } else {
-            log.info("존재하지 않는 이메일로 비밀번호 재설정 요청: email={}", email);
+            log.debug("존재하지 않는 이메일로 비밀번호 재설정 요청: email={}", email);
             ensureConstantResponseTime();
         }
 
@@ -96,6 +96,6 @@ public class PasswordResetTokenService {
         PasswordResetToken usedToken = passwordResetToken.markAsUsed();
         passwordResetTokenRepository.save(usedToken);
         
-        log.info("비밀번호 재설정 완료: userId={}", user.getUserId());
+        log.debug("비밀번호 재설정 완료: userId={}", user.getUserId());
     }
 }

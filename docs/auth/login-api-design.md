@@ -437,7 +437,7 @@ public class TokenRepositoryImpl implements TokenRepository {
         blacklistedTokens.removeIf(token -> !jwtTokenProvider.validateToken(token));
         int finalSize = blacklistedTokens.size();
 
-        log.info("만료된 토큰 정리 완료. 제거된 토큰 수: {}, 남은 토큰 수: {}",
+        log.debug("만료된 토큰 정리 완료. 제거된 토큰 수: {}, 남은 토큰 수: {}",
                 initialSize - finalSize, finalSize);
     }
 }

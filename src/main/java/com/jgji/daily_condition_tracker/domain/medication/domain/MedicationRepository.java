@@ -10,4 +10,5 @@ public interface MedicationRepository {
     Page<Medication> findByUserIdAndIsActive(long userId, boolean isActive, Pageable pageable);
     Page<Medication> findByUserId(long userId, Pageable pageable);
     Optional<Medication> findByIdAndUserId(long medicationId, long userId);
+    boolean existsByNameAndUserIdAndIdNot(String name, long userId, long medicationId);
 }

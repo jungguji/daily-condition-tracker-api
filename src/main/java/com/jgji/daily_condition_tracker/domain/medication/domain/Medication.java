@@ -62,6 +62,24 @@ public final class Medication {
                 .build();
     }
 
+    public Medication withUpdates(String name, Integer dosage, String unit, String description, Boolean isActive) {
+        if (name != null) {
+            validateName(name);
+        }
+
+        return Medication.builder()
+                .medicationId(this.medicationId)
+                .userId(this.userId)
+                .name(name)
+                .dosage(dosage)
+                .unit(unit)
+                .description(description)
+                .isActive(isActive)
+                .createdAt(this.createdAt)
+                .updatedAt(OffsetDateTime.now())
+                .build();
+    }
+
     private static void validateName(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("약 이름은 필수값입니다.");

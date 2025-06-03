@@ -53,6 +53,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/logout").authenticated() // 로그아웃
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/me").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/v1/medications").authenticated() // 약 등록
+                        .requestMatchers(HttpMethod.GET, "/api/v1/medications").authenticated() // 약 리스트 조회
+                        .requestMatchers(HttpMethod.GET, "/api/v1/medications/*").authenticated() // 약 상세 조회
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/medications").authenticated() // 약 수정
 
                         .anyRequest().authenticated() // 그 외 모든 경로는 인증 필요
                 )

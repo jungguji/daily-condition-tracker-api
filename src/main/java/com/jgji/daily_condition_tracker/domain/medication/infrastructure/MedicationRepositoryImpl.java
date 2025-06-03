@@ -39,4 +39,9 @@ class MedicationRepositoryImpl implements MedicationRepository {
         Optional<MedicationEntity> entityOptional = medicationJpaRepository.findByMedicationIdAndUserId(medicationId, userId);
         return entityOptional.map(MedicationEntity::toDomain);
     }
+
+    @Override
+    public boolean existsByNameAndUserIdAndIdNot(String name, long userId, long medicationId) {
+        return medicationJpaRepository.existsByNameAndUserIdAndMedicationIdNot(name, userId, medicationId);
+    }
 } 

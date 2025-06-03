@@ -5,7 +5,7 @@ import com.jgji.daily_condition_tracker.domain.auth.application.CustomUserPrinci
 import com.jgji.daily_condition_tracker.domain.auth.application.PasswordResetTokenService;
 import com.jgji.daily_condition_tracker.domain.auth.presentation.dto.*;
 import com.jgji.daily_condition_tracker.domain.user.domain.User;
-import com.jgji.daily_condition_tracker.global.common.ApiResponse;
+import com.jgji.daily_condition_tracker.domain.shared.presentation.dto.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

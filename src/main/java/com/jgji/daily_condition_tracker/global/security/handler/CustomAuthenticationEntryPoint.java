@@ -1,7 +1,7 @@
 package com.jgji.daily_condition_tracker.global.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jgji.daily_condition_tracker.global.common.ApiResponse;
+import com.jgji.daily_condition_tracker.domain.shared.presentation.dto.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

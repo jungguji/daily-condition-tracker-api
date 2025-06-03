@@ -6,8 +6,8 @@ import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.Medic
 import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationResponse;
 import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationSummaryResponse;
 import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationUpdateRequest;
-import com.jgji.daily_condition_tracker.global.common.PageRequest;
-import com.jgji.daily_condition_tracker.global.common.PageResponse;
+import com.jgji.daily_condition_tracker.domain.shared.presentation.dto.PageRequest;
+import com.jgji.daily_condition_tracker.domain.shared.presentation.dto.PageResponse;
 import com.jgji.daily_condition_tracker.global.exception.BusinessRuleViolationException;
 import com.jgji.daily_condition_tracker.global.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;

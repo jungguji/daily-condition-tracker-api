@@ -1,5 +1,6 @@
 package com.jgji.daily_condition_tracker.global.common;
 
+import com.jgji.daily_condition_tracker.domain.shared.presentation.dto.PageResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -4,11 +4,11 @@ import com.jgji.daily_condition_tracker.domain.auth.application.CustomUserPrinci
 import com.jgji.daily_condition_tracker.domain.medication.application.MedicationService;
 import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationSummaryResponse;
 import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationUpdateRequest;
-import com.jgji.daily_condition_tracker.global.common.PageRequest;
-import com.jgji.daily_condition_tracker.global.common.PageResponse;
+import com.jgji.daily_condition_tracker.domain.shared.presentation.dto.PageRequest;
+import com.jgji.daily_condition_tracker.domain.shared.presentation.dto.PageResponse;
 import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationCreateRequest;
 import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationResponse;
-import com.jgji.daily_condition_tracker.global.common.ApiResponse;
+import com.jgji.daily_condition_tracker.domain.shared.presentation.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

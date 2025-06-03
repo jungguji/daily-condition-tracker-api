@@ -1,6 +1,6 @@
 package com.jgji.daily_condition_tracker.global.exception;
 
-import com.jgji.daily_condition_tracker.global.common.ApiResponse;
+import com.jgji.daily_condition_tracker.domain.shared.presentation.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

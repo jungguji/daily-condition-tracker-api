@@ -3,7 +3,7 @@ package com.jgji.daily_condition_tracker.domain.user.presentation;
 import com.jgji.daily_condition_tracker.domain.user.presentation.dto.SignUpRequest;
 import com.jgji.daily_condition_tracker.domain.user.presentation.dto.SignUpResponse;
 import com.jgji.daily_condition_tracker.domain.user.application.SignUpService;
-import com.jgji.daily_condition_tracker.global.common.ApiResponse;
+import com.jgji.daily_condition_tracker.domain.shared.presentation.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

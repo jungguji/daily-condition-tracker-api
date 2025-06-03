@@ -1,4 +1,4 @@
-package com.jgji.daily_condition_tracker.global.common;
+package com.jgji.daily_condition_tracker.domain.shared.presentation.dto;
 
 import java.util.List;
 

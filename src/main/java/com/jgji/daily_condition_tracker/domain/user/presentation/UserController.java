@@ -4,7 +4,7 @@ import com.jgji.daily_condition_tracker.domain.auth.application.CustomUserPrinci
 import com.jgji.daily_condition_tracker.domain.user.application.UserService;
 import com.jgji.daily_condition_tracker.domain.user.domain.User;
 import com.jgji.daily_condition_tracker.domain.user.presentation.dto.CurrentUserResponse;
-import com.jgji.daily_condition_tracker.global.common.ApiResponse;
+import com.jgji.daily_condition_tracker.domain.shared.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

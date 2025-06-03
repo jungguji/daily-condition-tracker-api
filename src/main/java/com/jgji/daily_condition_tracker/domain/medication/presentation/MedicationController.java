@@ -59,4 +59,19 @@ public class MedicationController {
         
         return ResponseEntity.ok(ApiResponse.success(response));
     }
+
+    @GetMapping("/{medicationId}")
+    public ResponseEntity<ApiResponse<MedicationResponse>> getMedicationById(
+            @PathVariable long medicationId,
+            @AuthenticationPrincipal CustomUserPrincipal userDetails) {
+        
+        long userId = userDetails.getUser().getUserId();
+        
+        MedicationResponse response = medicationService.findMedicationById(medicationId, userId);
+        
+        log.debug("약 상세 조회 성공: userId={}, medicationId={}, name={}", 
+                userId, response.medicationId(), response.name());
+        
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
 } 

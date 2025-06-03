@@ -22,7 +22,7 @@ public class SignUpService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public SignUpResponse signUp(SignUpRequest request) {
         log.info("회원가입 시도: email={}", request.email());
 

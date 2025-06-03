@@ -28,12 +28,7 @@ public class PasswordResetTokenService {
     private final EmailSender emailSender;
     private final PasswordEncoder passwordEncoder;
 
-    /**
-     * 비밀번호 재설정 요청을 처리합니다.
-     *
-     * @param email 비밀번호 재설정을 요청한 이메일 주소
-     */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void processPasswordResetRequest(String email) {
         long startTime = System.currentTimeMillis();
         Optional<User> userOptional = userRepository.findByEmail(email);
@@ -81,13 +76,7 @@ public class PasswordResetTokenService {
         }
     }
 
-    /**
-     * 비밀번호 재설정 확인을 처리합니다.
-     *
-     * @param token 비밀번호 재설정 토큰
-     * @param newPassword 새 비밀번호
-     */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void processPasswordResetConfirm(String token, String newPassword) {
         PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(token)
                 .orElseThrow(() -> new InvalidTokenException("유효하지 않은 토큰입니다."));

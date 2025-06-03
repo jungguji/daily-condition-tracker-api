@@ -27,7 +27,7 @@ public class MedicationService {
 
     private final MedicationRepository medicationRepository;
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public MedicationResponse createMedication(long userId, MedicationCreateRequest request) {
         Medication medication = Medication.create(
                 userId,
@@ -93,7 +93,7 @@ public class MedicationService {
         );
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public MedicationResponse updateMedication(long userId, long medicationId, MedicationUpdateRequest dto) {
         if (isAllFieldsUndefined(dto)) {
             throw new BusinessRuleViolationException("수정할 내용이 없습니다.");
@@ -136,7 +136,7 @@ public class MedicationService {
         );
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteMedication(long userId, long medicationId) {
         log.debug("약 삭제 요청: userId={}, medicationId={}", userId, medicationId);
         

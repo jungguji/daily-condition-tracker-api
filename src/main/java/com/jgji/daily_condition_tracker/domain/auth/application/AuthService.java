@@ -20,8 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Collections;
-
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -77,11 +75,7 @@ public class AuthService {
         return TokenRefreshResponse.of(newAccessToken, newRefreshToken);
     }
 
-    /**
-     * 사용자 정보와 토큰을 이용한 로그아웃 처리
-     * @AuthenticationPrincipal과 함께 사용하기 위한 메서드
-     */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void logout(User user, String authorizationHeader) {
         if (!StringUtils.hasText(authorizationHeader) || !authorizationHeader.startsWith("Bearer ")) {
             throw new InvalidTokenException("유효하지 않은 Authorization 헤더입니다.");

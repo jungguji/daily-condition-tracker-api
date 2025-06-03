@@ -16,12 +16,15 @@ public final class Medication {
     private final String unit;
     private final String description;
     private final boolean isActive;
+    private final boolean isDeleted;
+    private final OffsetDateTime deletedAt;
     private final OffsetDateTime createdAt;
     private final OffsetDateTime updatedAt;
 
     @Builder(access = lombok.AccessLevel.PRIVATE)
     private Medication(Long medicationId, long userId, String name, Integer dosage, String unit,
-                       String description, boolean isActive, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
+                       String description, boolean isActive, boolean isDeleted, OffsetDateTime deletedAt,
+                       OffsetDateTime createdAt, OffsetDateTime updatedAt) {
         this.medicationId = medicationId;
         this.userId = userId;
         this.name = name;
@@ -29,6 +32,8 @@ public final class Medication {
         this.unit = unit;
         this.description = description;
         this.isActive = isActive;
+        this.isDeleted = isDeleted;
+        this.deletedAt = deletedAt;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -43,6 +48,8 @@ public final class Medication {
                 .unit(unit)
                 .description(description)
                 .isActive(isActive)
+                .isDeleted(false)
+                .deletedAt(null)
                 .createdAt(OffsetDateTime.now())
                 .updatedAt(OffsetDateTime.now())
                 .build();
@@ -57,6 +64,8 @@ public final class Medication {
                 .unit(entity.getUnit())
                 .description(entity.getDescription())
                 .isActive(entity.isActive())
+                .isDeleted(entity.isDeleted())
+                .deletedAt(entity.getDeletedAt())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .build();
@@ -75,6 +84,24 @@ public final class Medication {
                 .unit(unit)
                 .description(description)
                 .isActive(isActive)
+                .isDeleted(this.isDeleted)
+                .deletedAt(this.deletedAt)
+                .createdAt(this.createdAt)
+                .updatedAt(OffsetDateTime.now())
+                .build();
+    }
+    public Medication delete() {
+
+        return Medication.builder()
+                .medicationId(this.medicationId)
+                .userId(this.userId)
+                .name(this.name)
+                .dosage(this.dosage)
+                .unit(this.unit)
+                .description(this.description)
+                .isActive(this.isActive)
+                .isDeleted(true)
+                .deletedAt(OffsetDateTime.now())
                 .createdAt(this.createdAt)
                 .updatedAt(OffsetDateTime.now())
                 .build();

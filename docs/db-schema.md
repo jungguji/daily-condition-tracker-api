@@ -56,21 +56,24 @@ CREATE TABLE IF NOT EXISTS `medications` (
   `medication_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '약 고유 ID',
   `user_id` BIGINT UNSIGNED NOT NULL COMMENT '해당 약을 등록한 사용자 ID',
   `name` VARCHAR(255) NOT NULL COMMENT '약 이름',
-  `dosage` VARCHAR(100) NULL COMMENT '용량 (e.g., 50mg, 1정)',
+  `dosage` SMALLINT UNSIGNED NULL COMMENT '용량 (e.g., 50mg, 1정)',
   `unit` VARCHAR(50) NULL COMMENT '단위 (e.g., mg, 정, ml)',
   `description` TEXT NULL COMMENT '약에 대한 추가 설명/메모',
   `is_active` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '현재 복용중인 약 여부 (1: 활성, 0: 비활성)',
+  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '약 소프트삭제 여부 (1: 삭제됨, 0: 활성)',
+  `deleted_at` TIMESTAMP NULL DEFAULT NULL COMMENT '삭제 일시 (소프트 삭제)',
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '등록 일시',
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '마지막 수정 일시',
   PRIMARY KEY (`medication_id`),
   INDEX `fk_medications_users_idx` (`user_id` ASC) VISIBLE,
+  INDEX `idx_user_not_deleted` (`user_id` ASC, `is_deleted` ASC) VISIBLE, -- 사용자별 활성 약 조회 성능
   CONSTRAINT `fk_medications_users`
     FOREIGN KEY (`user_id`)
     REFERENCES `users` (`user_id`)
     ON DELETE CASCADE -- 사용자가 삭제되면 관련 약 정보도 삭제
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-COMMENT = '사용자 등록 약 목록';
+COMMENT = '사용자 등록 약 목록 (소프트 삭제 지원)';
 ```
 
 # medication_reminders
@@ -211,7 +214,7 @@ CREATE TABLE IF NOT EXISTS `medication_taken_records` (
   CONSTRAINT `fk_medication_taken_records_medications`
     FOREIGN KEY (`medication_id`)
     REFERENCES `medications` (`medication_id`)
-    ON DELETE RESTRICT -- 약 목록에서 삭제되더라도, 복용 기록은 남도록 RESTRICT (또는 SET NULL 고려)
+    ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_medication_taken_records_reminders`
     FOREIGN KEY (`taken_from_reminder_id`)

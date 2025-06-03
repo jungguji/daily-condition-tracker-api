@@ -1,8 +1,8 @@
 # Product Requirements Document: Daily Condition Tracker API (MVP)
 
 **Version:** 0.1
-**Date:** 2025-5-5 (작성일)
-**Author:** (작성자 이름)
+**Date:** 2025-5-5
+**Author:** Junggu Ji
 
 ## 1. 개요 (Overview)
 

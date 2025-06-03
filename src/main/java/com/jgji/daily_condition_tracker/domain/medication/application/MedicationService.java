@@ -5,10 +5,13 @@ import com.jgji.daily_condition_tracker.domain.medication.domain.MedicationRepos
 import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationCreateRequest;
 import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationResponse;
 import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationSummaryResponse;
+import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationUpdateRequest;
 import com.jgji.daily_condition_tracker.global.common.PageRequest;
 import com.jgji.daily_condition_tracker.global.common.PageResponse;
+import com.jgji.daily_condition_tracker.global.exception.BusinessRuleViolationException;
 import com.jgji.daily_condition_tracker.global.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -86,5 +89,60 @@ public class MedicationService {
                 medication.getCreatedAt(),
                 medication.getUpdatedAt()
         );
+    }
+
+    @Transactional
+    public MedicationResponse updateMedication(long userId, long medicationId, MedicationUpdateRequest dto) {
+        if (isAllFieldsUndefined(dto)) {
+            throw new BusinessRuleViolationException("수정할 내용이 없습니다.");
+        }
+
+        Medication originalMedication = medicationRepository.findByIdAndUserId(medicationId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("약", "ID", medicationId));
+
+        String newName = extractValueOrNull(dto.name(), originalMedication.getName());
+        Integer newDosage = extractValueOrNull(dto.dosage(), originalMedication.getDosage());
+        String newUnit = extractValueOrNull(dto.unit(), originalMedication.getUnit());
+        String newDescription = extractValueOrNull(dto.description(), originalMedication.getDescription());
+        Boolean newIsActive = extractValueOrNull(dto.isActive(), originalMedication.isActive());
+
+        if (newName != null && !newName.equals(originalMedication.getName())) {
+            if (medicationRepository.existsByNameAndUserIdAndIdNot(newName, userId, medicationId)) {
+                throw new BusinessRuleViolationException("이미 동일한 이름의 약물이 존재합니다: " + newName);
+            }
+        }
+
+        Medication updatedMedication = originalMedication.withUpdates(
+                newName,
+                newDosage,
+                newUnit,
+                newDescription,
+                newIsActive
+        );
+
+        Medication savedMedication = medicationRepository.save(updatedMedication);
+
+        return MedicationResponse.from(
+                savedMedication.getMedicationId(),
+                savedMedication.getName(),
+                savedMedication.getDosage(),
+                savedMedication.getUnit(),
+                savedMedication.getDescription(),
+                savedMedication.isActive(),
+                savedMedication.getCreatedAt(),
+                savedMedication.getUpdatedAt()
+        );
+    }
+
+    private boolean isAllFieldsUndefined(MedicationUpdateRequest dto) {
+        return !dto.name().isPresent() && 
+               !dto.dosage().isPresent() && 
+               !dto.unit().isPresent() && 
+               !dto.description().isPresent() && 
+               !dto.isActive().isPresent();
+    }
+
+    private <T> T extractValueOrNull(JsonNullable<T> jsonNullable, T originalValue) {
+        return jsonNullable.isPresent() ? jsonNullable.get() : originalValue;
     }
 } 

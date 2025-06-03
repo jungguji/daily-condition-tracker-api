@@ -3,6 +3,7 @@ package com.jgji.daily_condition_tracker.domain.medication.presentation;
 import com.jgji.daily_condition_tracker.domain.auth.application.CustomUserPrincipal;
 import com.jgji.daily_condition_tracker.domain.medication.application.MedicationService;
 import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationSummaryResponse;
+import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationUpdateRequest;
 import com.jgji.daily_condition_tracker.global.common.PageRequest;
 import com.jgji.daily_condition_tracker.global.common.PageResponse;
 import com.jgji.daily_condition_tracker.domain.medication.presentation.dto.MedicationCreateRequest;
@@ -70,6 +71,22 @@ public class MedicationController {
         MedicationResponse response = medicationService.findMedicationById(medicationId, userId);
         
         log.debug("약 상세 조회 성공: userId={}, medicationId={}, name={}", 
+                userId, response.medicationId(), response.name());
+        
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @PatchMapping("/{medicationId}")
+    public ResponseEntity<ApiResponse<MedicationResponse>> updateMedication(
+            @PathVariable long medicationId,
+            @Valid @RequestBody MedicationUpdateRequest request,
+            @AuthenticationPrincipal CustomUserPrincipal userDetails) {
+        
+        long userId = userDetails.getUser().getUserId();
+        
+        MedicationResponse response = medicationService.updateMedication(userId, medicationId, request);
+        
+        log.debug("약 수정 성공: userId={}, medicationId={}, name={}", 
                 userId, response.medicationId(), response.name());
         
         return ResponseEntity.ok(ApiResponse.success(response));

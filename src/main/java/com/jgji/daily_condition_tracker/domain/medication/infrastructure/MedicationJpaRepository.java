@@ -10,4 +10,5 @@ interface MedicationJpaRepository extends JpaRepository<MedicationEntity, Long> 
     Page<MedicationEntity> findByUserIdAndIsActive(long userId, boolean isActive, Pageable pageable);
     Page<MedicationEntity> findByUserId(long userId, Pageable pageable);
     Optional<MedicationEntity> findByMedicationIdAndUserId(long medicationId, long userId);
+    boolean existsByNameAndUserIdAndMedicationIdNot(String name, long userId, long medicationId);
 }

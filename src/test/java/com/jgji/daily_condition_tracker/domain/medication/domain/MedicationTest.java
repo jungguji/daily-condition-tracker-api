@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.time.OffsetDateTime;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -43,6 +41,8 @@ class MedicationTest {
             assertThat(medication.getUnit()).isEqualTo(MedicationConstants.DEFAULT_UNIT);
             assertThat(medication.getDescription()).isEqualTo(MedicationConstants.DEFAULT_DESCRIPTION);
             assertThat(medication.isActive()).isEqualTo(MedicationConstants.DEFAULT_IS_ACTIVE);
+            assertThat(medication.isDeleted()).isFalse();
+            assertThat(medication.getDeletedAt()).isNull();
             assertThat(medication.getCreatedAt()).isNotNull();
             assertThat(medication.getUpdatedAt()).isNotNull();
         }
@@ -65,6 +65,8 @@ class MedicationTest {
             assertThat(medication.getUnit()).isNull();
             assertThat(medication.getDescription()).isNull();
             assertThat(medication.isActive()).isTrue();
+            assertThat(medication.isDeleted()).isFalse();
+            assertThat(medication.getDeletedAt()).isNull();
         }
 
         @DisplayName("약물 생성 - 경계값 테스트 (이름 255자)")
@@ -96,6 +98,8 @@ class MedicationTest {
             );
 
             assertThat(medication.isActive()).isFalse();
+            assertThat(medication.isDeleted()).isFalse();
+            assertThat(medication.getDeletedAt()).isNull();
         }
     }
 
@@ -167,6 +171,8 @@ class MedicationTest {
             assertThat(medication.getUnit()).isEqualTo(entity.getUnit());
             assertThat(medication.getDescription()).isEqualTo(entity.getDescription());
             assertThat(medication.isActive()).isEqualTo(entity.isActive());
+            assertThat(medication.isDeleted()).isEqualTo(entity.isDeleted());
+            assertThat(medication.getDeletedAt()).isEqualTo(entity.getDeletedAt());
             assertThat(medication.getCreatedAt()).isEqualTo(entity.getCreatedAt());
             assertThat(medication.getUpdatedAt()).isEqualTo(entity.getUpdatedAt());
         }
@@ -182,8 +188,7 @@ class MedicationTest {
                     .setNull("unit")
                     .setNull("description")
                     .set("isActive", true)
-                    .set("createdAt", OffsetDateTime.now())
-                    .set("updatedAt", OffsetDateTime.now())
+                    .set("isDeleted", false)
                     .sample();
 
             Medication medication = Medication.of(entity);
@@ -195,6 +200,128 @@ class MedicationTest {
             assertThat(medication.getUnit()).isNull();
             assertThat(medication.getDescription()).isNull();
             assertThat(medication.isActive()).isTrue();
+            assertThat(medication.isDeleted()).isFalse();
+        }
+
+        @DisplayName("엔티티로부터 약물 객체 생성 - 삭제된 상태")
+        @Test
+        void createMedicationFromDeletedEntity() {
+            MedicationEntity entity = fixtureMonkey.giveMeBuilder(MedicationEntity.class)
+                    .set("medicationId", 1L)
+                    .set("userId", MedicationConstants.DEFAULT_USER_ID)
+                    .set("name", MedicationConstants.DEFAULT_NAME)
+                    .set("isDeleted", true)
+                    .sample();
+
+            Medication medication = Medication.of(entity);
+
+            assertThat(medication.isDeleted()).isTrue();
+        }
+    }
+
+    @DisplayName("약물 소프트 삭제")
+    @Nested
+    class SoftDelete {
+
+        @DisplayName("약물 삭제 - 성공")
+        @Test
+        void deleteMedication() {
+            Medication medication = Medication.create(
+                    MedicationConstants.DEFAULT_USER_ID,
+                    MedicationConstants.DEFAULT_NAME,
+                    MedicationConstants.DEFAULT_DOSAGE,
+                    MedicationConstants.DEFAULT_UNIT,
+                    MedicationConstants.DEFAULT_DESCRIPTION,
+                    MedicationConstants.DEFAULT_IS_ACTIVE
+            );
+
+            Medication deletedMedication = medication.delete();
+
+            assertThat(deletedMedication.isDeleted()).isTrue();
+
+            assertThat(deletedMedication.getMedicationId()).isEqualTo(medication.getMedicationId());
+            assertThat(deletedMedication.getUserId()).isEqualTo(medication.getUserId());
+            assertThat(deletedMedication.getName()).isEqualTo(medication.getName());
+            assertThat(deletedMedication.getDosage()).isEqualTo(medication.getDosage());
+            assertThat(deletedMedication.getUnit()).isEqualTo(medication.getUnit());
+            assertThat(deletedMedication.getDescription()).isEqualTo(medication.getDescription());
+            assertThat(deletedMedication.isActive()).isEqualTo(medication.isActive());
+        }
+
+        @DisplayName("이미 삭제된 약물 삭제 시도")
+        @Test
+        void deleteAlreadyDeletedMedication() {
+            Medication medication = Medication.create(
+                    MedicationConstants.DEFAULT_USER_ID,
+                    MedicationConstants.DEFAULT_NAME,
+                    MedicationConstants.DEFAULT_DOSAGE,
+                    MedicationConstants.DEFAULT_UNIT,
+                    MedicationConstants.DEFAULT_DESCRIPTION,
+                    MedicationConstants.DEFAULT_IS_ACTIVE
+            );
+
+            Medication deletedMedication = medication.delete();
+            Medication secondDeletedMedication = deletedMedication.delete();
+
+            assertThat(secondDeletedMedication.isDeleted()).isTrue();
+            assertThat(secondDeletedMedication.getDeletedAt()).isNotNull();
+        }
+
+        @DisplayName("삭제된 약물의 기본 정보 유지")
+        @Test
+        void deletedMedicationKeepsOriginalData() {
+            Medication medication = Medication.create(
+                    MedicationConstants.DEFAULT_USER_ID,
+                    "테스트 약물",
+                    100,
+                    "mg",
+                    "테스트 설명",
+                    true
+            );
+
+            Medication deletedMedication = medication.delete();
+
+            assertThat(deletedMedication.getName()).isEqualTo("테스트 약물");
+            assertThat(deletedMedication.getDosage()).isEqualTo(100);
+            assertThat(deletedMedication.getUnit()).isEqualTo("mg");
+            assertThat(deletedMedication.getDescription()).isEqualTo("테스트 설명");
+            assertThat(deletedMedication.isActive()).isTrue();
+            assertThat(deletedMedication.getUserId()).isEqualTo(MedicationConstants.DEFAULT_USER_ID);
+        }
+    }
+
+    @DisplayName("약물 업데이트")
+    @Nested
+    class Update {
+
+        @DisplayName("삭제된 약물의 업데이트")
+        @Test
+        void updateDeletedMedication() {
+            Medication medication = Medication.create(
+                    MedicationConstants.DEFAULT_USER_ID,
+                    MedicationConstants.DEFAULT_NAME,
+                    MedicationConstants.DEFAULT_DOSAGE,
+                    MedicationConstants.DEFAULT_UNIT,
+                    MedicationConstants.DEFAULT_DESCRIPTION,
+                    MedicationConstants.DEFAULT_IS_ACTIVE
+            );
+
+            Medication deletedMedication = medication.delete();
+            Medication updatedMedication = deletedMedication.withUpdates(
+                    "업데이트된 이름",
+                    200,
+                    "정",
+                    "업데이트된 설명",
+                    false
+            );
+
+            assertThat(updatedMedication.isDeleted()).isTrue();
+            assertThat(updatedMedication.getDeletedAt()).isEqualTo(deletedMedication.getDeletedAt());
+            assertThat(updatedMedication.getName()).isEqualTo("업데이트된 이름");
+            assertThat(updatedMedication.getDosage()).isEqualTo(200);
+            assertThat(updatedMedication.getUnit()).isEqualTo("정");
+            assertThat(updatedMedication.getDescription()).isEqualTo("업데이트된 설명");
+            assertThat(updatedMedication.isActive()).isFalse();
         }
     }
 
@@ -229,6 +356,7 @@ class MedicationTest {
             assertThat(medication1.getUnit()).isEqualTo(medication2.getUnit());
             assertThat(medication1.getDescription()).isEqualTo(medication2.getDescription());
             assertThat(medication1.isActive()).isEqualTo(medication2.isActive());
+            assertThat(medication1.isDeleted()).isEqualTo(medication2.isDeleted());
         }
     }
 } 

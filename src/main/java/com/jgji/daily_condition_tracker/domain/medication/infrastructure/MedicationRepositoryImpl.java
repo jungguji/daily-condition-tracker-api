@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
 @RequiredArgsConstructor
+@Repository
 class MedicationRepositoryImpl implements MedicationRepository {
 
     private final MedicationJpaRepository medicationJpaRepository;
@@ -24,24 +24,24 @@ class MedicationRepositoryImpl implements MedicationRepository {
 
     @Override
     public Page<Medication> findByUserIdAndIsActive(long userId, boolean isActive, Pageable pageable) {
-        Page<MedicationEntity> entityPage = medicationJpaRepository.findByUserIdAndIsActive(userId, isActive, pageable);
+        Page<MedicationEntity> entityPage = medicationJpaRepository.findByUserIdAndIsActiveAndIsDeleted(userId, isActive, false, pageable);
         return entityPage.map(MedicationEntity::toDomain);
     }
 
     @Override
     public Page<Medication> findByUserId(long userId, Pageable pageable) {
-        Page<MedicationEntity> entityPage = medicationJpaRepository.findByUserId(userId, pageable);
+        Page<MedicationEntity> entityPage = medicationJpaRepository.findByUserIdAndIsDeleted(userId, false, pageable);
         return entityPage.map(MedicationEntity::toDomain);
     }
 
     @Override
     public Optional<Medication> findByIdAndUserId(long medicationId, long userId) {
-        Optional<MedicationEntity> entityOptional = medicationJpaRepository.findByMedicationIdAndUserId(medicationId, userId);
+        Optional<MedicationEntity> entityOptional = medicationJpaRepository.findByMedicationIdAndUserIdAndIsDeleted(medicationId, userId, false);
         return entityOptional.map(MedicationEntity::toDomain);
     }
 
     @Override
     public boolean existsByNameAndUserIdAndIdNot(String name, long userId, long medicationId) {
-        return medicationJpaRepository.existsByNameAndUserIdAndMedicationIdNot(name, userId, medicationId);
+        return medicationJpaRepository.existsByNameAndUserIdAndMedicationIdNotAndIsDeleted(name, userId, medicationId, false);
     }
 } 

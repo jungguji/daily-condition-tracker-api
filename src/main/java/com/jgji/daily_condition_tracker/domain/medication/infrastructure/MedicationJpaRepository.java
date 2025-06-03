@@ -7,8 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 interface MedicationJpaRepository extends JpaRepository<MedicationEntity, Long> {
-    Page<MedicationEntity> findByUserIdAndIsActive(long userId, boolean isActive, Pageable pageable);
-    Page<MedicationEntity> findByUserId(long userId, Pageable pageable);
     Optional<MedicationEntity> findByMedicationIdAndUserId(long medicationId, long userId);
-    boolean existsByNameAndUserIdAndMedicationIdNot(String name, long userId, long medicationId);
+    Page<MedicationEntity> findByUserIdAndIsActiveAndIsDeleted(long userId, boolean isActive, boolean isDeleted, Pageable pageable);
+    Page<MedicationEntity> findByUserIdAndIsDeleted(long userId, boolean isDeleted, Pageable pageable);
+    Optional<MedicationEntity> findByMedicationIdAndUserIdAndIsDeleted(long medicationId, long userId, boolean isDeleted);
+    boolean existsByNameAndUserIdAndMedicationIdNotAndIsDeleted(String name, long userId, long medicationId, boolean isDeleted);
 }

@@ -7,8 +7,10 @@ import java.util.Optional;
 
 public interface MedicationRepository {
     Medication save(Medication medication);
+    
+    Optional<Medication> findByIdAndUserId(long medicationId, long userId);
+
     Page<Medication> findByUserIdAndIsActive(long userId, boolean isActive, Pageable pageable);
     Page<Medication> findByUserId(long userId, Pageable pageable);
-    Optional<Medication> findByIdAndUserId(long medicationId, long userId);
     boolean existsByNameAndUserIdAndIdNot(String name, long userId, long medicationId);
 }

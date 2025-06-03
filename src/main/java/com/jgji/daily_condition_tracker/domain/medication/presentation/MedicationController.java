@@ -91,4 +91,18 @@ public class MedicationController {
         
         return ResponseEntity.ok(ApiResponse.success(response));
     }
+
+    @DeleteMapping("/{medicationId}")
+    public ResponseEntity<ApiResponse<Void>> deleteMedication(
+            @PathVariable long medicationId,
+            @AuthenticationPrincipal CustomUserPrincipal userDetails) {
+        
+        long userId = userDetails.getUser().getUserId();
+        
+        medicationService.deleteMedication(userId, medicationId);
+        
+        log.debug("약 삭제 요청 처리 완료: userId={}, medicationId={}", userId, medicationId);
+        
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
 } 

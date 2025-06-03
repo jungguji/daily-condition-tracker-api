@@ -11,6 +11,7 @@ import com.jgji.daily_condition_tracker.global.common.PageResponse;
 import com.jgji.daily_condition_tracker.global.exception.BusinessRuleViolationException;
 import com.jgji.daily_condition_tracker.global.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MedicationService {
@@ -132,6 +134,23 @@ public class MedicationService {
                 savedMedication.getCreatedAt(),
                 savedMedication.getUpdatedAt()
         );
+    }
+
+    @Transactional
+    public void deleteMedication(long userId, long medicationId) {
+        log.debug("약 삭제 요청: userId={}, medicationId={}", userId, medicationId);
+        
+        Medication medication = medicationRepository.findByIdAndUserId(medicationId, userId)
+                .orElseThrow(() -> {
+                    log.warn("삭제할 약을 찾을 수 없음: userId={}, medicationId={}", userId, medicationId);
+                    return new ResourceNotFoundException("약", "ID", medicationId);
+                });
+        
+        Medication deletedMedication = medication.delete();
+        medicationRepository.save(deletedMedication);
+        
+        log.debug("약 소프트 삭제 성공: userId={}, medicationId={}, name={}",
+                userId, medicationId, medication.getName());
     }
 
     private boolean isAllFieldsUndefined(MedicationUpdateRequest dto) {

@@ -1,7 +1,7 @@
 package com.jgji.daily_condition_tracker.domain.medication.infrastructure;
 
-import com.jgji.daily_condition_tracker.domain.shared.domain.BaseEntity;
 import com.jgji.daily_condition_tracker.domain.medication.domain.Medication;
+import com.jgji.daily_condition_tracker.domain.shared.domain.SoftDeletableEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import org.hibernate.annotations.Comment;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "medications")
-public class MedicationEntity extends BaseEntity {
+public class MedicationEntity extends SoftDeletableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,9 +44,14 @@ public class MedicationEntity extends BaseEntity {
     @Column(name = "is_active", columnDefinition = "DEFAULT 1", nullable = false)
     private boolean isActive;
 
+    // `is_deleted` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '약 소프트삭제 여부 (1: 삭제됨, 0: 활성)',
+    @Comment("약 소프트삭제 여부 (1: 삭제됨, 0: 활성")
+    @Column(name = "is_deleted", columnDefinition = "TINYINT(1) DEFAULT 0", nullable = false)
+    private boolean isDeleted;
+
     @Builder(access = AccessLevel.PRIVATE)
     private MedicationEntity(Long medicationId, long userId, String name, Integer dosage, String unit,
-                           String description, boolean isActive) {
+                           String description, boolean isActive, boolean isDeleted) {
         this.medicationId = medicationId;
         this.userId = userId;
         this.name = name;
@@ -54,6 +59,7 @@ public class MedicationEntity extends BaseEntity {
         this.unit = unit;
         this.description = description;
         this.isActive = isActive;
+        this.isDeleted = isDeleted;
     }
 
     static MedicationEntity fromDomain(Medication medication) {
@@ -65,6 +71,7 @@ public class MedicationEntity extends BaseEntity {
                 .unit(medication.getUnit())
                 .description(medication.getDescription())
                 .isActive(medication.isActive())
+                .isDeleted(medication.isDeleted())
                 .build();
     }
 

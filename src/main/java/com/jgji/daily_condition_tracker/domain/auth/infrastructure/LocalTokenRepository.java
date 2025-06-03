@@ -1,6 +1,5 @@
 package com.jgji.daily_condition_tracker.domain.auth.infrastructure;
 
-import com.jgji.daily_condition_tracker.global.security.filter.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -13,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Repository
 class LocalTokenRepository {
     private final Set<String> blacklistedTokens = ConcurrentHashMap.newKeySet();
-    private final JwtTokenProvider jwtTokenProvider;
 
     public void addToBlacklist(String token) {
         blacklistedTokens.add(token);

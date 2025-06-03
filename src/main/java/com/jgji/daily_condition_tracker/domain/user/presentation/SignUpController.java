@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/user")
 @RestController
+@RequestMapping("/api/v1/user")
 public class SignUpController {
 
     private final SignUpService signUpService;

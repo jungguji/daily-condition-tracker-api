@@ -64,8 +64,11 @@ public class AuthService {
         User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new InvalidCredentialsException("사용자를 찾을 수 없습니다."));
 
+        CustomUserPrincipal userPrincipal = new CustomUserPrincipal(user);
+
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-            user.getEmail().getValue(), null, Collections.emptyList());
+            userPrincipal, null, userPrincipal.getAuthorities());
+
         String newAccessToken = jwtTokenProvider.generateAccessToken(authentication);
         String newRefreshToken = jwtTokenProvider.generateRefreshToken(authentication);
 

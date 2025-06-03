@@ -80,6 +80,18 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 인증 관련 예외 (401)
+     */
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInvalidCredentials(InvalidCredentialsException ex) {
+        log.warn("잘못된 인증 정보 (이메일/비밀번호)로 인한 인증 실패: {}", ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.fail(401, ex.getMessage()));
+    }
+
+    /**
      * 권한 관련 예외 (403)
      */
     @ExceptionHandler(AuthorizationException.class)
@@ -121,7 +133,6 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<Void>> handleIllegalArgument(IllegalArgumentException ex) {
-        log.error("잘못된 인수 오류 발생", ex);
         log.warn("잘못된 인수: {}", ex.getMessage());
         
         return ResponseEntity

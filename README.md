@@ -49,11 +49,14 @@
 
 ### 주요 기능
 
+#### 구현
 - 사용자 인증 (회원가입, 로그인, 비밀번호 재설정)
-- 건강 기록 입력 (식단, 증상, 약 복용, 수면, 메모)
 - 약 관리 (등록, 조회, 수정, 삭제)
-- 약 복용 알림 설정
+
+#### 미구현
+- 건강 기록 입력 (식단, 증상, 약 복용, 수면, 메모)
 - 기록 조회 및 관리 (목록, 상세, 수정, 삭제)
+- 약 복용 알림 설정
 
 ### 핵심 API 엔드포인트 예시
 
@@ -61,15 +64,12 @@
     - `POST /api/auth/signup`: 회원 가입
     - `POST /api/auth/login`: 로그인
     - `GET /api/users/me`: 현재 사용자 정보 조회
-- **기록**:
-    - `POST /api/records/diet`: 식단 기록 추가
-    - `POST /api/records/symptom`: 증상 기록 추가
-    - `GET /api/records`: 기록 목록 조회
-    - `GET /api/records/{recordId}`: 특정 기록 상세 조회
 - **약 관리**:
     - `POST /api/medications`: 새 약 등록
     - `GET /api/medications`: 내 약 목록 조회
+    - `GET /api/medications/{medicationId}`: 약 정보 조회
     - `PATCH /api/medications/{medicationId}`: 약 정보 수정
+    - `DELETE /api/medications/{medicationId}`: 약 정보 삭제
 - **헬스 체크**:
     - `GET /api/health`: 서버 상태 확인
 
@@ -87,18 +87,6 @@
 - `diet_records`, `symptom_records`, `medication_taken_records`, `sleep_records`, `note_records`: 각 기록 유형별 상세 정보
 
 상세한 DDL 및 관계는 [DB 스키마 문서](./docs/db-schema.md)를 참고해주세요.
-
-## 애플리케이션 실행 방법
-
-1.  **데이터베이스 설정**: `application.yml` (또는 `application.properties`) 파일에 올바른 MySQL 접속 정보를 입력합니다.
-2.  **애플리케이션 실행**: Gradle을 사용하여 빌드 및 실행합니다.
-    ```bash
-    ./gradlew bootRun
-    ```
-    또는 IDE에서 Spring Boot 애플리케이션을 직접 실행합니다.
-
-3.  **API 문서 확인**: 애플리케이션 실행 후, 브라우저에서 다음 URL로 접속하여 Swagger API 문서를 확인할 수 있습니다 (포트 및 경로 설정에 따라 다를 수 있음):
-    `http://localhost:8080/swagger-ui.html` (기본값 예시)
 
 ## 개발 가이드라인
 
